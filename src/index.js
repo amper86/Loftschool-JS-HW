@@ -36,13 +36,10 @@ function map(array, fn) {
  */
 
 function reduce(array, fn, initial) {
+    let result = initial || array[0];
+    let i = (initial) ? 0 : 1;
 
-    let result = initial;
-    let foo = 0;
-
-    result === undefined ? (result = array[0], foo = 1) : false;
-
-    for (let i = foo; i < array.length; i++) {
+    for (; i < array.length; i++) {
         result = fn(result, array[i], i, array);
     }
 
