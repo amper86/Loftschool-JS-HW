@@ -10,6 +10,7 @@
    кликов на указанный элемент
  */
 function addListener(eventName, target, fn) {
+    target.addEventListener(eventName, fn, false);
 }
 
 /*
@@ -22,6 +23,7 @@ function addListener(eventName, target, fn) {
     указанный элемент
  */
 function removeListener(eventName, target, fn) {
+    target.removeEventListener(eventName, fn, false);
 }
 
 /*
@@ -35,6 +37,9 @@ function removeListener(eventName, target, fn) {
    приводить к переходу на другую страницу
  */
 function skipDefault(eventName, target) {
+    target.addEventListener(eventName, (e) => {
+        e.preventDefault();
+    }, false)
 }
 
 /*
@@ -46,6 +51,9 @@ function skipDefault(eventName, target) {
    emulateClick(document.querySelector('a')) // для указанного элемента должно быть сэмулировано события click
  */
 function emulateClick(target) {
+    const event = new Event('click');
+
+    target.dispatchEvent(event);
 }
 
 /*
@@ -59,6 +67,11 @@ function emulateClick(target) {
     который будет вызывать указанную функцию только если кликнули на кнопку (элемент с тегом button)
  */
 function delegate(target, fn) {
+    target.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            fn();
+        }
+    })
 }
 
 /*
@@ -72,6 +85,10 @@ function delegate(target, fn) {
     кликов для указанного элемента, который вызовется только один раз и затем удалится
  */
 function once(target, fn) {
+    target.addEventListener('click', function foo() {
+        target.removeEventListener('click', foo);
+        fn();
+    })
 }
 
 export {
