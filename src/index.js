@@ -86,8 +86,8 @@ function delegate(target, fn) {
  */
 function once(target, fn) {
     target.addEventListener('click', function foo() {
-        target.removeEventListener('click', foo);
         fn();
+        target.removeEventListener('click', foo);
     })
 }
 
