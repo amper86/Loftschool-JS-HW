@@ -15,7 +15,7 @@ function createDivWithText(text) {
 
     div.textContent = text;
 
-    return div
+    return div;
 }
 
 /*
@@ -56,12 +56,12 @@ function findAllPSiblings(where) {
     let arr = [];
 
     for (let i = 0; i < where.children.length - 1; i++) {
-        if (where.children[i].nextElementSibling.tagName === 'P') {
+        if (where.children[i].nextElementSibling && where.children[i].nextElementSibling.tagName === 'P') {
             arr.push(where.children[i]);
         }
     }
 
-    return arr
+    return arr;
 }
 
 /*
