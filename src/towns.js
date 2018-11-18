@@ -37,7 +37,38 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    return new Promise((resolve) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
+        xhr.responseType = 'json';
+        xhr.send();
+        xhr.addEventListener('load', () => {
+            const towns = xhr.response;
+            let arr = towns.sort(compareTowns);
+
+            function compareTowns(a, b) {
+                if (a.name < b.name) {
+                    return -1;
+                }
+                if (a.name > b.name) {
+                    return 1;
+                }
+
+                return 0;
+            }
+
+            if (xhr.readyState === 4) {
+                loadingBlock.setAttribute('style', 'display: none;');
+                filterBlock.removeAttribute('style');
+            }
+
+            resolve(arr);
+        });
+    });
 }
+
+loadTowns(); // проверяем загрузку городов и изменение стилей
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -51,6 +82,13 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    let flag = false;
+
+    if (~(full.toLowerCase().indexOf(chunk.toLowerCase()))) {
+        flag = true;
+    }
+
+    return flag;
 }
 
 /* Блок с надписью "Загрузка" */
@@ -63,7 +101,24 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
 filterInput.addEventListener('keyup', function() {
-    // это обработчик нажатия кливиш в текстовом поле
+    let inputVal = filterInput.value;
+
+    filterResult.innerHTML = '';
+
+    loadTowns().then(function(towns) {
+
+        for (let town of towns) {
+            if (inputVal.length === 0) {
+                filterResult.innerHTML = '';
+
+            } else if (isMatching(town.name, inputVal)) {
+                let p = document.createElement('p');
+
+                p.textContent = town.name;
+                filterResult.appendChild(p);
+            }
+        }
+    })
 });
 
 export {
