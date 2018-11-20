@@ -49,4 +49,11 @@ filterNameInput.addEventListener('keyup', function() {
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    // document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+    document.cookie = addNameInput.value + '=' + addValueInput.value;
+
+    listTable.innerHTML = '';
+
+    // addNameInput.value = '';
+    // addValueInput.value = '';
 });
