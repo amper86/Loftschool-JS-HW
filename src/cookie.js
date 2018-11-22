@@ -43,17 +43,60 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+const getCookies = () => {
+    let cookies = document.cookie.split('; ').reduce((prev, current) => {
+        const [name, value] = current.split('=');
+
+        prev[name] = value;
+
+        return prev;
+    }, {});
+
+    return cookies;
+};
+
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
 });
 
-addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
-    // document.cookie = `${addNameInput.value}=${addValueInput.value}`;
-    document.cookie = addNameInput.value + '=' + addValueInput.value;
+const buildTable = () => {
+    const cookies = getCookies();
 
     listTable.innerHTML = '';
 
-    // addNameInput.value = '';
-    // addValueInput.value = '';
+    for (let prop in cookies) {
+        if (cookies.hasOwnProperty(prop)) {
+            const tr = document.createElement('tr');
+            const tdName = document.createElement('td');
+            const tdValue = document.createElement('td');
+            const button = document.createElement('button');
+
+            tdName.textContent = prop;
+            tdValue.textContent = cookies[prop];
+            button.textContent = 'Удалить';
+            tr.appendChild(tdName);
+            tr.appendChild(tdValue);
+            tr.appendChild(button);
+            listTable.appendChild(tr);
+        }
+    }
+};
+
+addButton.addEventListener('click', () => {
+    // здесь можно обработать нажатие на кнопку "добавить cookie"
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+
+    buildTable();
 });
+
+listTable.addEventListener('click', (e) => {
+    const trDel = e.target.closest('tr');
+    const name = trDel.firstElementChild.textContent;
+
+    listTable.removeChild(trDel);
+    deleteCookiesFromBrowser(name);
+});
+
+const deleteCookiesFromBrowser = (name) => {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+};
