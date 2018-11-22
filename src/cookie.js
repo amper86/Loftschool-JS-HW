@@ -43,6 +43,44 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+filterNameInput.addEventListener('keyup', function() {
+    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    filter();
+});
+
+addButton.addEventListener('click', () => {
+    // здесь можно обработать нажатие на кнопку "добавить cookie"
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+
+    // buildTable();
+    filter();
+});
+
+const filter = () => {
+    if (filterNameInput.value.length === 0) {
+        buildTable(getCookies());
+    } else if (filterNameInput.value.length > 0) {
+        isMatching();
+    }
+}
+//
+const isMatching = () => {
+    const filterInputVal = filterNameInput.value;
+    let obj = getCookies();
+    let newObj = {};
+
+    for (let key in obj) {
+
+        if (obj.hasOwnProperty(key)) {
+
+            if (~key.indexOf(filterInputVal) || ~obj[key].indexOf(filterInputVal)) {
+                newObj[key] = obj[key];
+            }
+        }
+    }
+    buildTable(newObj);
+};
+
 const getCookies = () => {
     let cookies = document.cookie.split('; ').reduce((prev, current) => {
         const [name, value] = current.split('=');
@@ -55,12 +93,8 @@ const getCookies = () => {
     return cookies;
 };
 
-filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-});
-
-const buildTable = () => {
-    const cookies = getCookies();
+const buildTable = (cookies) => {
+    // const cookies = getCookies();
 
     listTable.innerHTML = '';
 
@@ -82,21 +116,15 @@ const buildTable = () => {
     }
 };
 
-addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
-    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
-
-    buildTable();
-});
-
 listTable.addEventListener('click', (e) => {
+    // console.log(e.target);
     const trDel = e.target.closest('tr');
     const name = trDel.firstElementChild.textContent;
 
     listTable.removeChild(trDel);
-    deleteCookiesFromBrowser(name);
+    deliteCookiesFromBrowser(name);
 });
 
-const deleteCookiesFromBrowser = (name) => {
+const deliteCookiesFromBrowser = (name) => {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 };
