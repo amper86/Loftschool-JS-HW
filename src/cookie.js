@@ -51,51 +51,50 @@ filterNameInput.addEventListener('keyup', function() {
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
     document.cookie = `${addNameInput.value}=${addValueInput.value}`;
-
-    // buildTable();
     filter();
 });
 
+// при пустом филтре строи таблицу или сравниваем
 const filter = () => {
     if (filterNameInput.value.length === 0) {
         buildTable(getCookies());
     } else if (filterNameInput.value.length > 0) {
         isMatching();
     }
-}
-//
+};
+
+// сравеиваем, если совпадение есть в имени или значении куки, то записываем в новый объект и строи таблицу по нему
 const isMatching = () => {
     const filterInputVal = filterNameInput.value;
-    let obj = getCookies();
-    let newObj = {};
+    let cookies = getCookies();
+    let newCookiesObj = {};
 
-    for (let key in obj) {
+    for (let key in cookies) {
 
-        if (obj.hasOwnProperty(key)) {
+        if (cookies.hasOwnProperty(key)) {
 
-            if (~key.indexOf(filterInputVal) || ~obj[key].indexOf(filterInputVal)) {
-                newObj[key] = obj[key];
+            if (~key.indexOf(filterInputVal) || ~cookies[key].indexOf(filterInputVal)) {
+                newCookiesObj[key] = cookies[key];
             }
         }
     }
-    buildTable(newObj);
+    buildTable(newCookiesObj);
 };
 
+// получаем куки в виде объектов
 const getCookies = () => {
-    let cookies = document.cookie.split('; ').reduce((prev, current) => {
+
+    return document.cookie.split('; ').reduce((prev, current) => {
         const [name, value] = current.split('=');
 
         prev[name] = value;
 
         return prev;
     }, {});
-
-    return cookies;
 };
 
+// строим таблицу из переданного объекта, перед этим очищаем таблицу
 const buildTable = (cookies) => {
-    // const cookies = getCookies();
-
     listTable.innerHTML = '';
 
     for (let prop in cookies) {
@@ -116,15 +115,18 @@ const buildTable = (cookies) => {
     }
 };
 
+// используем делегирование, чтобы поймать нажате по кнопке в нужной строке и удалить строку
 listTable.addEventListener('click', (e) => {
-    // console.log(e.target);
     const trDel = e.target.closest('tr');
     const name = trDel.firstElementChild.textContent;
 
-    listTable.removeChild(trDel);
-    deliteCookiesFromBrowser(name);
+    if (e.target.tagName === 'BUTTON') {
+        listTable.removeChild(trDel);
+        deleteCookiesFromBrowser(name);
+    }
 });
 
-const deliteCookiesFromBrowser = (name) => {
+// удаляем куку из браузера
+const deleteCookiesFromBrowser = (name) => {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 };
