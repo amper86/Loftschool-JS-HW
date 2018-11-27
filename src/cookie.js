@@ -70,9 +70,7 @@ const isMatching = () => {
     let newCookiesObj = {};
 
     for (let key in cookies) {
-
         if (cookies.hasOwnProperty(key)) {
-
             if (~key.indexOf(filterInputVal) || ~cookies[key].indexOf(filterInputVal)) {
                 newCookiesObj[key] = cookies[key];
             }
@@ -83,7 +81,6 @@ const isMatching = () => {
 
 // получаем куки в виде объектов
 const getCookies = () => {
-
     return document.cookie.split('; ').reduce((prev, current) => {
         const [name, value] = current.split('=');
 
